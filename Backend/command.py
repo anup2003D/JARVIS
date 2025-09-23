@@ -37,10 +37,12 @@ def takeCommand():
         
         
         speak(query)
-        return query.lower()
+        eel.ShowHood()
+        #return query.lower()
     except Exception as e:
         print("Say that again please...")
         return "None"
+    return query.lower()
 
 #speak("Voice assistant is now online.")
 #speak("Hello Anup, I am your voice assistant. How can I help you today?")
@@ -54,6 +56,9 @@ def takeAllCommands():
     if "open" in query:
         from Backend.feature import openCommand # type: ignore
         openCommand(query)
+    elif "Youtube" :
+        from Backend.feature import PlayYoutube # type: ignore
+        PlayYoutube(query)
     else:
         print("I did not understand that command.")
         speak("I did not understand that command.")

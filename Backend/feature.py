@@ -18,6 +18,8 @@ import pygame
 from Backend.config import ASSISSTANT_NAME
 import os
 from Backend.command import speak
+import re
+import pywhatkit as kit
 
 pygame.mixer.init()
 @eel.expose
@@ -37,3 +39,13 @@ def openCommand(query):
         os.system("start "+(query))
     else:
         speak("Please specify what to open.")
+        
+def PlayYoutube(query):
+    search_term=extract_yt_term(query)
+    speak("Playing "+search_term+" on Youtube")
+    kit.playonyt(search_term)
+    
+def extract_yt_term(command):
+    pattern = r'play\s+(.*?)\s+on\s+youtube'
+    match = re.search(pattern, command,re.IGNORECASE)
+    return match.group(1) if match else None
