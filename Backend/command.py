@@ -50,17 +50,22 @@ def takeCommand():
 
 @eel.expose
 def takeAllCommands():
-    query = takeCommand()
-    print(query)
-    
-    if "open" in query:
-        from Backend.feature import openCommand # type: ignore
-        openCommand(query)
-    elif "Youtube" :
-        from Backend.feature import PlayYoutube # type: ignore
-        PlayYoutube(query)
-    else:
-        print("I did not understand that command.")
-        speak("I did not understand that command.")
+    try:
+        query = takeCommand()
+        print(query)
+
+        if "open" in query:
+            from Backend.feature import openCommand # type: ignore
+            openCommand(query)
+        elif "Youtube" :
+            from Backend.feature import PlayYoutube # type: ignore
+            PlayYoutube(query)
+        else:
+            print("I did not understand that command.")
+            speak("I did not understand that command.")
+        
+    except:
+        print("I did not catch that. Please try again.")
+        speak("I did not catch that. Please try again.")
         
     eel.ShowHood()

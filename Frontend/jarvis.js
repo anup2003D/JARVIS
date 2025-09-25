@@ -71,4 +71,16 @@ $(document).ready(function(){
             console.error("Eel is not defined");
         }*/
     });
+
+
+    function doc_keyUp(e){
+
+        if(e.key==='j' && e.metaKey){
+            eel.play_assistant_sound();
+            $("#Oval").attr("hidden", true);
+            $("#SiriWave").attr("hidden", false);
+            eel.takeAllCommands()();
+        }
+    }
+    document.addEventListener('keyup', doc_keyUp, false);
 });

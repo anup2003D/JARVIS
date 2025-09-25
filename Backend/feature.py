@@ -13,6 +13,8 @@ def say_what_again():
     playsound(music_dir2)'''
     
     
+import struct
+import time
 import webbrowser
 import eel
 import pygame
@@ -22,6 +24,8 @@ from Backend.command import speak
 import re
 import pywhatkit as kit
 import sqlite3
+
+from Backend.helper import extract_yt_term
 conn = sqlite3.connect("jarvis.db")
 cursor = conn.cursor()
 
@@ -45,11 +49,14 @@ def openCommand(query):
         try:
             cursor.execute('SELECT path FROM sys_command WHERE name IN (?)',(app_name,))
             results = cursor.fetchall()
-            print(results)
+            
 
             if len(results)!=0:
                 speak("Opening "+query)
                 os.startfile(results[0][0]) 
+            else:
+                speak("Opening "+query)
+                os.system('start '+query)
 
             '''elif len(results)==0:
                 cursor.execute('SELECT url FROM web_command WHERE name IN (?)',(app_name,))
@@ -81,7 +88,39 @@ def PlayYoutube(query):
     speak("Playing "+search_term+" on Youtube")
     kit.playonyt(search_term)
     
-def extract_yt_term(command):
-    pattern = r'play\s+(.*?)\s+on\s+youtube'
-    match = re.search(pattern, command,re.IGNORECASE)
-    return match.group(1) if match else None
+def hotword():
+    porcupine=None
+    paud=None
+    audio_stream=None
+    try:
+        #pre trained keyowrds
+        porcupine=pvporcupine.create(keywords=["jarvis","alexa"])
+        paud=pyaudio.PyAudio()
+        audio_stream=paud.open(rate=porcupine.sample_rate,channels=1,format=pyaudio.paInt16,input=True,frames_per_buffer=porcupine.frame_length)
+        
+        #Loop for streaming
+        while True:
+            keyword=audio_stream.read(porcupine.frame_length)
+            keyword=struct.unpack_from("h"*porcupine.frame_length,keyword)
+            
+            #preprocessing keyword comes from mic
+            keyword_index=porcupine.process(keyword)
+            
+            #checking first keyword detected for not
+            if keyword_index>=0:
+                print("hotword detected")
+                
+                #pressing shortcut for win+j
+                import pyautogui as autogui
+                autogui.keyDown("win")
+                autogui.press("j")
+                time.sleep(2)
+                autogui.keyUp("win")
+                
+    except:
+        if porcupine is not None:
+            porcupine.delete()
+        if audio_stream is not None:
+            audio_stream.close()
+        if paud is not None:
+            paud.terminate()
