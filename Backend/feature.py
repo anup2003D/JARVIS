@@ -132,22 +132,37 @@ def hotword():
             
 def findContact(query):
     words_to_remove = [ASSISSTANT_NAME, 'make', 'a', 'to', 'phone', 'call', 'send', 'message', 'whatsapp','video']
-    query=remove_words(query, words_to_remove)
+    query = remove_words(query, words_to_remove)
     
     try:
-        query=query.strip().lower()
-        cursor.execute("SELECT phone FROM contacts WHERE LOWER(name)  LIKE ? OR LOWER(name) LIKE ?", ('%'+query+'%'+query))
-        results=cursor.fetchall()
-        print(results[0][0])
-        mobile_number_str=str(results[0][0])
+        query = query.strip().lower()
+        # Fixed SQL query to use single LIKE pattern
+        cursor.execute("SELECT phone FROM contacts WHERE LOWER(name) LIKE ?", ('%'+query+'%',))
+        results = cursor.fetchall()
+        
+        if not results:
+            speak('Contact not found')
+            return 0, 0
+            
+        print(f"Found contact: {results[0][0]}")
+        mobile_number_str = str(results[0][0])
         
         if not mobile_number_str.startswith('+91'):
-            mobile_number_str='+91'+mobile_number_str
+            mobile_number_str = '+91' + mobile_number_str
             
         return mobile_number_str, query
-    except:
-        speak('not exist in contacts')
-        return 0,0
+    except sqlite3.Error as e:
+        print(f"Database error: {e}")
+        speak('Error accessing contacts')
+        return 0, 0
+    except IndexError:
+        print("No results found")
+        speak('Contact not found')
+        return 0, 0
+    except Exception as e:
+        print(f"Error: {e}")
+        speak('Error finding contact')
+        return 0, 0
     
     
 def whatsapp(Phone, message, flag, name):
