@@ -57,9 +57,31 @@ def takeAllCommands():
         if "open" in query:
             from Backend.feature import openCommand # type: ignore
             openCommand(query)
+            
+        elif "send message" in query or "phone call" in query or "video call" in query:
+            print("Hellooo")
+            
+            from Backend.feature import findContact, whatsapp 
+            flag=""
+            phone, name = findContact(query)
+            if (phone != 0):
+                if "send message" in query:
+                    flag='message'
+                    speak("what message to send")
+                    query=takeCommand()
+                    
+                elif "phone call" in query:
+                    flag='call'
+                else:
+                    flag='video call'
+
+                whatsapp(phone, query, flag, name)
+                    
         elif "Youtube" :
             from Backend.feature import PlayYoutube # type: ignore
             PlayYoutube(query)
+            
+                        
         else:
             print("I did not understand that command.")
             speak("I did not understand that command.")

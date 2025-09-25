@@ -14,9 +14,13 @@ def say_what_again():
     
     
 import struct
+import subprocess
 import time
 import webbrowser
 import eel
+import pvporcupine
+import pyaudio
+import pyautogui
 import pygame
 from Backend.config import ASSISSTANT_NAME
 import os
@@ -25,7 +29,7 @@ import re
 import pywhatkit as kit
 import sqlite3
 
-from Backend.helper import extract_yt_term
+from Backend.helper import extract_yt_term, remove_words
 conn = sqlite3.connect("jarvis.db")
 cursor = conn.cursor()
 
@@ -124,3 +128,61 @@ def hotword():
             audio_stream.close()
         if paud is not None:
             paud.terminate()
+            
+            
+def findContact(query):
+    words_to_remove = [ASSISSTANT_NAME, 'make', 'a', 'to', 'phone', 'call', 'send', 'message', 'whatsapp','video']
+    query=remove_words(query, words_to_remove)
+    
+    try:
+        query=query.strip().lower()
+        cursor.execute("SELECT phone FROM contacts WHERE LOWER(name)  LIKE ? OR LOWER(name) LIKE ?", ('%'+query+'%'+query))
+        results=cursor.fetchall()
+        print(results[0][0])
+        mobile_number_str=str(results[0][0])
+        
+        if not mobile_number_str.startswith('+91'):
+            mobile_number_str='+91'+mobile_number_str
+            
+        return mobile_number_str, query
+    except:
+        speak('not exist in contacts')
+        return 0,0
+    
+    
+def whatsapp(Phone, message, flag, name):
+    if flag=='message':
+        target_tab=16
+        jarvis_message="Sending message to "+name
+        
+    elif flag=='call':
+        target_tab=10
+        message=''
+        jarvis_message="Calling to "+name
+        
+    else:
+        target_tab=11
+        message=''
+        jarvis_message="Video Calling to "+name
+        
+    #Encode the message for URL
+    encoded_message=quote(message)
+    speak(jarvis_message)
+    print(jarvis_message)
+    #Construct the URL
+    whatsapp_url=f"https://web.whatsapp.com/send?phone={Phone}&text={encoded_message}"
+
+    #Construct the full command
+    full_command=f'start "" "{whatsapp_url}" '
+    
+    #open whatsapp with the contructed URL using cmd.exe
+    subprocess.run(full_command, shell=True)
+    time.sleep(5)
+    subprocess.run(full_command, shell=True)
+    
+    pyautogui.hotkey('ctrl', 'f')
+
+    for i in range(1, target_tab):
+        pyautogui.hotkey('tab')
+    pyautogui.hotkey('enter')
+    speak(jarvis_message)

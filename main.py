@@ -19,5 +19,3 @@ def start():
             host='localhost',
             block=True)
 
-if __name__=="__main__":
-    start()

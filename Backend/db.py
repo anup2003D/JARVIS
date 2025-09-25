@@ -11,7 +11,7 @@ cursor.execute(query)
 query = "CREATE TABLE IF NOT EXISTS contacts(id integer primary key, name VARCHAR(200), email VARCHAR(255), phone VARCHAR(255) NULL)"
 cursor.execute(query)
 
-'''query = "INSERT INTO sys_command VALUES(null,'Whatsapp', 'C:\\Users\\Anup0\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Chrome Apps\\WhatsApp Web.lnk')"
+'''query = "INSERT INTO sys_command VALUES(null,'whatsapp', 'https://web.whatsapp.com/')"
 cursor.execute(query)
 conn.commit()'''
 '''query = "INSERT INTO web_command VALUES(null,'whatsapp', 'C:\\Users\\Anup0\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Chrome Apps\\WhatsApp Web.lnk')"
@@ -21,15 +21,23 @@ conn.commit()'''
 cursor.execute(query)
 conn.commit()'''
 
-desired_columns_indices=[0,19]
 
-with open('contacts.csv','r', encoding='utf-8') as csvfile:
-    csvreader = csv.reader(csvfile)
-    for row in csvreader:
-        selected_data=[row[i] for i in desired_columns_indices]
-        cursor.execute('''INSERT INTO contacts(id, 'name', 'phone') VALUES(null, ?,?);''', tuple(selected_data))
+'''cursor.execute('"DELETE FROM sys_command WHERE name LIKE '%whatsapp%' OR name LIKE '%Whatsapp%'; DELETE FROM web_command WHERE name LIKE '%whatsapp%' OR name LIKE '%Whatsapp%'"')
+conn.commit()'''
 
-conn.commit()
-conn.close()
+'''cursor.execute('DROP TABLE sys_command')
+conn.commit()'''
 
-print("Database and tables created successfully.")
+
+#desired_columns_indices=[0,18]
+#
+#with open('contacts.csv','r', encoding='utf-8') as csvfile:
+#    csvreader = csv.reader(csvfile)
+#    for row in csvreader:
+#        selected_data=[row[i] for i in desired_columns_indices]
+#        cursor.execute('''INSERT INTO contacts(id, 'name', 'phone') VALUES(null, ?,?);''', tuple(selected_data))
+#
+#conn.commit()
+#conn.close()
+#
+#print("Database and tables created successfully.")
