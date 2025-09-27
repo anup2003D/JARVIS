@@ -49,7 +49,7 @@
                         <input type="text" id="chatbox" name="chatbox" placeholder="Ask me anything..." class="input-field"/>
                         <button id="SendBtn" class="glow-on-hover" hidden><i class="bi bi-send" ></i></button>
                         <button id="MicBtn" class="glow-on-hover"><i class="bi bi-mic"></i></button>
-                        <button id="ChatBtn" class="glow-on-hover"><i class="bi bi-chat-dots"></i></button>
+                        <button id="ChatBtn" class="glow-on-hover" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions"><i class="bi bi-chat-dots"></i></button>
                         <button id="SettingBtn" class="glow-on-hover"><i class="bi bi-gear"></i></button>
                     </div>
                 </div>
@@ -75,6 +75,18 @@
         </div>
     </div>
 
+
+<div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">Chats</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div id="chat-canvas-body" class="chat-container">
+        <!-- Messages will appear here -->
+    </div>
+  </div>
+</div>
     <!--Jquery-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.min.js"></script>

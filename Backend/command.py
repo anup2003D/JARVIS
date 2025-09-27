@@ -13,6 +13,7 @@ def speak(text):
     engine.setProperty('rate', 200)  # Slower rate for better comprehension
     engine.say(text)
     engine.runAndWait()
+    eel.receiverText(text)
 
 
 def takeCommand():
@@ -58,10 +59,12 @@ def takeAllCommands(message=None):
         if not query:
             return
         print(query)
+        eel.senderText(query)
     else:
         # Text input path
         query = message  # Use the message directly
         print(f"Message received: {query}")
+        eel.senderText(query)
     
     try:
         # Remove this line - it's overwriting the text input with voice input
