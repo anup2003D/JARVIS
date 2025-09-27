@@ -3,3 +3,4 @@ contact.csv
 jarvis.db
 /Backend/__pycache__/
 /Backend/cookie.JSON
+/Backend/config.py
