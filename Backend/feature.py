@@ -30,6 +30,8 @@ import pywhatkit as kit
 import sqlite3
 from urllib.parse import quote
 from Backend.helper import extract_yt_term, remove_words
+import google.generativeai as genai
+
 conn = sqlite3.connect("jarvis.db")
 cursor = conn.cursor()
 
@@ -201,3 +203,58 @@ def whatsapp(Phone, message, flag, name):
         pyautogui.hotkey('tab')
     pyautogui.hotkey('enter')
     speak(jarvis_message)
+    
+def chatBot(query):
+    try:
+        # Configure the Gemini API
+        from Backend.config import GOOGLE_API_KEY
+        genai.configure(api_key=GOOGLE_API_KEY)
+        
+        # Create a Gemini model instance
+        model = genai.GenerativeModel('gemini-pro')
+        
+        # Add safety settings
+        safety_settings = [
+            {
+                "category": "HARM_CATEGORY_HARASSMENT",
+                "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+            },
+            {
+                "category": "HARM_CATEGORY_HATE_SPEECH",
+                "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+            }
+        ]
+        
+        # Generate response with safety settings
+        response = model.generate_content(
+            query,
+            safety_settings=safety_settings,
+            generation_config={
+                'temperature': 0.7,
+                'top_p': 0.8,
+                'top_k': 40
+            }
+        )
+        
+        # Check if response is blocked
+        if response.prompt_feedback.block_reason:
+            speak("I apologize, but I cannot respond to that query.")
+            return None
+            
+        # Extract and speak the response
+        result = response.text
+        if result:
+            speak(result)
+            return result
+        else:
+            speak("I couldn't generate a response.")
+            return None
+            
+    except ImportError:
+        print("Error: GOOGLE_API_KEY not found in config file")
+        speak("API key configuration is missing")
+        return None
+    except Exception as e:
+        print(f"Error in chatBot: {str(e)}")
+        speak("Sorry, I'm having trouble connecting to Gemini")
+        return None
