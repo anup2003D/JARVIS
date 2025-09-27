@@ -28,7 +28,7 @@ from Backend.command import speak
 import re
 import pywhatkit as kit
 import sqlite3
-
+from urllib.parse import quote
 from Backend.helper import extract_yt_term, remove_words
 conn = sqlite3.connect("jarvis.db")
 cursor = conn.cursor()
@@ -167,16 +167,16 @@ def findContact(query):
     
 def whatsapp(Phone, message, flag, name):
     if flag=='message':
-        target_tab=16
+        target_tab=12
         jarvis_message="Sending message to "+name
         
     elif flag=='call':
-        target_tab=10
+        target_tab=7
         message=''
         jarvis_message="Calling to "+name
         
     else:
-        target_tab=11
+        target_tab=6
         message=''
         jarvis_message="Video Calling to "+name
         
